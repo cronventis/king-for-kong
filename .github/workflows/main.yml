@@ -60,4 +60,4 @@ jobs:
         prerelease: false
         title: "Release ${{ steps.taggerDryRun.outputs.new_tag }}"
         files: |
-        King-for-Kong-${{ steps.taggerDryRun.outputs.new_tag }}.zip
+          King-for-Kong-${{ steps.taggerDryRun.outputs.new_tag }}.zip
