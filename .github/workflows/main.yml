@@ -14,16 +14,17 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Get latest tag
-        id: latest_tag
-        run: echo "LATEST_TAG=$(git describe --abbrev=0 --tags)" >> $GITHUB_ENV
+      - name: Install GitVersion
+        run: |
+          wget https://github.com/GitTools/GitVersion/releases/latest/download/gitversion-linux-x64.tar.gz -O gitversion.tar.gz
+          tar -xzf gitversion.tar.gz
+          chmod +x ./gitversion
 
-      - name: Install semver package
-        run: npm install --global semver
-      
-      - name: Generate new tag
-        id: new_tag
-        run: echo "NEW_TAG=$(semver --increment patch $LATEST_TAG)" >> $GITHUB_ENV
+      - name: Analyze version
+        id: analyze_version
+        run: |
+          ./gitversion /output buildserver /nofetch
+          echo "VERSION=$(cat GitVersion.yml | yq r - -j | jq -r '.SemVer')" >> $GITHUB_ENV
       
       - name: Login to GitHub
         uses: actions/checkout@v2
@@ -37,5 +38,5 @@ jobs:
       
       - name: Create and push new tag
         run: |
-          git tag $NEW_TAG
-          git push origin $NEW_TAG
+          git tag $VERSION
+          git push origin $VERSION
