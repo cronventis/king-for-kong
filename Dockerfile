@@ -16,6 +16,3 @@ COPY docker/nginx.conf /etc/nginx/conf.d/default.conf
 RUN chmod +x /usr/local/bin/startup.sh
 EXPOSE 80
 CMD ["/usr/local/bin/startup.sh", "nginx", "-g", "daemon off;"]
-
-FROM scratch as export
-COPY --from=build /app/dist/king /app/dist/king
