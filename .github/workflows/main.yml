@@ -14,17 +14,11 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install GitVersion
-        run: |
-          wget https://github.com/GitTools/GitVersion/releases/latest/download/gitversion-linux-x64.tar.gz -O gitversion.tar.gz
-          tar -xzf gitversion.tar.gz
-          chmod +x ./gitversion
-
       - name: Analyze version
         id: analyze_version
         run: |
-          ./gitversion /output buildserver /nofetch
-          echo "VERSION=$(cat GitVersion.yml | yq r - -j | jq -r '.SemVer')" >> $GITHUB_ENV
+            version=$(docker run --rm -v "$(pwd):/repo" gittools/gitversion:5.6.6 /repo)
+            echo "VERSION=$(echo "$version" | yq r - -j | jq -r '.SemVer')" >> $GITHUB_ENV        
       
       - name: Login to GitHub
         uses: actions/checkout@v2
