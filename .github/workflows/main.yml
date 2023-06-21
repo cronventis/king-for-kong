@@ -1,36 +1,15 @@
-name: Auto Tagging
+name: Create Tag
 
 on:
   push:
     branches:
-      - main
+      - master
 
 jobs:
-  tag:
-    permissions: write-all
+  build:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v2
-
-      - name: Analyze version
-        id: analyze_version
-        run: |
-            version=$(docker run --rm -v "$GITHUB_WORKSPACE:/repo" gittools/gitversion:5.6.6 /repo)
-            echo "VERSION=$(echo "$version" | yq r - -j | jq -r '.SemVer')" >> $GITHUB_ENV        
-      
-      - name: Login to GitHub
-        uses: actions/checkout@v2
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-      
-      - name: Configure Git
-        run: |
-          git config user.name "GitHub Actions"
-          git config user.email "actions@github.com"
-      
-      - name: Create and push new tag
-        run: |
-          git tag $VERSION
-          git push origin $VERSION
+    - uses: actions/checkout@v2
+    - uses: Klemensas/action-autotag@stable
+      with:
+        GITHUB_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
