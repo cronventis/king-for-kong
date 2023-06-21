@@ -21,9 +21,17 @@ jobs:
         id: new_tag
         run: echo ::set-output name=tag::$(echo "${{ steps.latest_tag.outputs.tag }}" | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
       
-      - name: Create and push new tag
+      - name: Login to GitHub
+        uses: actions/checkout@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Configure Git
         run: |
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
+      
+      - name: Create and push new tag
+        run: |
           git tag ${{ steps.new_tag.outputs.tag }}
           git push origin ${{ steps.new_tag.outputs.tag }}
