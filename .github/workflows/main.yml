@@ -18,6 +18,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
+        DEFAULT_BUMP: patch
         DRY_RUN: true
     - name: echo new tag
       run: |
@@ -52,6 +53,7 @@ jobs:
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
+        DEFAULT_BUMP: patch
 
     - uses: "marvinpinto/action-automatic-releases@latest"
       with:
