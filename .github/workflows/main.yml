@@ -1,10 +1,11 @@
-name: Auto Tag my Application
+name: Build, Tag and create release
 on:
   push:
     branches:
       - main
 jobs:
-  Patch:
+  build:
+    name: Runs duild and tagging
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v2
@@ -17,7 +18,6 @@ jobs:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         WITH_V: true
         DRY_RUN: true
-
     - name: echo new tag
       run: |
         echo "The next tag version will be: ${{ steps.taggerDryRun.outputs.new_tag }}"
@@ -40,9 +40,9 @@ jobs:
       run: |
         docker build -t $DOCKER_REPO/$IMAGE_NAME:$TAG .
         docker push $DOCKER_REPO/$IMAGE_NAME:$TAG
-        docker create --name king-export $DOCKER_REPO/$IMAGE_NAME:$TAG
-        docker cp king-export:/app/dist/king - | gzip > King-for-Kong-$TAG.zip
-        docker rm king-export
+    # docker create --name king-export $DOCKER_REPO/$IMAGE_NAME:$TAG
+    # docker cp king-export:/app/dist/king - | gzip > King-for-Kong-$TAG.zip
+    # docker rm king-export
     # Build
 
     - name: Minor version for each merge
