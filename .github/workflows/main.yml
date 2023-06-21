@@ -8,8 +8,9 @@ on:
 jobs:
   tag:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Set up Git
+      - name: Checkout repository
         uses: actions/checkout@v2
       
       - name: Get latest tag
