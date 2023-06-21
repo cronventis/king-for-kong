@@ -1,0 +1,28 @@
+name: Auto Tagging
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  tag:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up Git
+        uses: actions/checkout@v2
+      
+      - name: Get latest tag
+        id: latest_tag
+        run: echo ::set-output name=tag::$(git describe --tags --abbrev=0)
+      
+      - name: Generate new tag
+        id: new_tag
+        run: echo ::set-output name=tag::$(echo "${{ steps.latest_tag.outputs.tag }}" | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+      
+      - name: Create and push new tag
+        run: |
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git tag ${{ steps.new_tag.outputs.tag }}
+          git push origin ${{ steps.new_tag.outputs.tag }}
